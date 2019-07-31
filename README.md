@@ -8,7 +8,7 @@ A learning project to dabble with FastAPI and Kubernete Deployment Manifests.
 
 ### Getting Started
 
-For easy deployment into a Kubernetes cluster, simple clone this repository and run the following from the repository root:
+For easy deployment into a Kubernetes cluster, simple clone this repository, create the kubernetes secrets (see `k8s/readme.md`) and run the following from the repository root:
 
 ```shell
 kubectl apply -f k8s/
@@ -20,7 +20,7 @@ Alternatively, if you want to run this locally for hacking:
 
 ```shell
 # install your python requirements
-pip install -r requirements.txt
+pip install -r app/requirements.txt
 
 # prepare your environment
 source hack/prepare-env.sh
