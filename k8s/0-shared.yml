@@ -1,0 +1,20 @@
+# these are shared resources required
+# by both the app and the db
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quotes-app-db-name
+  labels:
+    app: quotes
+data:
+  MYSQL_DATABASE: quotesdb
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quotes-app-mysql-user
+  labels:
+    app: quotes
+data:
+  MYSQL_USER: quotesapp

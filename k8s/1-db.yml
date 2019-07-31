@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: quotes
+    tier: db
+  name: quotes-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quotes
+      tier: db
+  template:
+    metadata:
+      labels:
+        app: quotes
+        tier: db
+    spec:
+      # TODO: add initContainers to check
+      # access to the DB with creds provided
+      containers:
+      - image: mariadb
+        name: mariadb
+        ports:
+        - containerPort: 3306
+        envFrom:
+        - configMapRef:
+            name: quotes-app-mysql-user
+        - configMapRef:
+            name: quotes-app-db-name
+        - secretRef:
+            name: quotes-app-dbrootuser-pass
+        - secretRef:
+            name: quotes-app-dbuser-pass
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: quotes
+    tier: db
+  name: quotes-db-svc
+spec:
+  ports:
+  - name: tcp-mysql
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+  - name: udp-mysql
+    port: 3306
+    protocol: UDP
+    targetPort: 3306
+  selector:
+    app: quotes
+    tier: db
+  type: ClusterIP

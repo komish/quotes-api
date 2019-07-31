@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: quotes
+    tier: backend
+  name: quotes-api
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: quotes
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: quotes
+        tier: backend
+    spec:
+      initContainers:
+      - name: database-readiness
+        image: busybox
+        args: ['sh', '-c', 'sleep 5; nc -vz quotes-db-svc 3306']
+      containers:
+      - name: backend
+        image: xkomish/quotes:v0.1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: LISTEN_ADDRESS
+          value: '0.0.0.0'
+        - name: DB_HOST
+          value: quotes-db-svc
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_USER
+              name: quotes-app-mysql-user
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: MYSQL_DATABASE
+              name: quotes-app-db-name
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_PASSWORD
+              name: quotes-app-dbuser-pass
+        envFrom:
+        - secretRef:
+            name: quotes-app-admin-token
+            optional: True
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: quotes
+    tier: backend
+  name: quotes-api-svc
+spec:
+  ports:
+  - name: quotes-api-tcp
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    app: quotes
+    tier: backend
