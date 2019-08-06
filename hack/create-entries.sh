@@ -52,3 +52,12 @@ curl -sX POST localhost:8000/quote -H "ADMIN-TOKEN: $TOKEN" -d \
     "src": "Pierre Nanterme - former CEO, Accenture"
 }
 ' | python -m json.tool
+
+curl -sX POST localhost:8000/quote -H "ADMIN-TOKEN: $TOKEN" -d \
+'
+{
+    "msg": "It'\''s not the rats who first abandon a sinking ship. It'\''s the crew members know how to swim.",
+    "src": "Antonio Garcia Martinez - Author",
+    "src_mat": "Chaos Monkey"
+}
+' | python -m json.tool
